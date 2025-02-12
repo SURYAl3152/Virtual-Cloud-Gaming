@@ -1,0 +1,144 @@
+import React, { useState, useEffect, useRef } from 'react';
+
+// LoginForm Component: Collects email, username, and password.
+function LoginForm({ onLogin }) {
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Here, you would typically send a request to your backend to validate credentials.
+    // For demonstration, we'll assume the login is successful.
+    console.log('Login attempted with:', { email, username, password });
+    onLogin({ email, username });
+  };
+
+  return (
+    <div style={styles.formContainer}>
+      <h2 style={styles.heading}>Login</h2>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={styles.input}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={styles.input}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={styles.input}
+          required
+        />
+        <button type="submit" style={styles.button}>Login</button>
+      </form>
+    </div>
+  );
+}
+
+// VideoStream Component: Displays a video element that plays a stream.
+// For demo purposes, it will capture your webcam stream.
+function VideoStream() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    async function startStream() {
+      try {
+        // For demo: get user webcam stream.
+        // In a production cloud gaming app, you would connect to a game stream via WebRTC or a similar method.
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing webcam:', error);
+      }
+    }
+    startStream();
+  }, []);
+
+  return (
+    <div style={styles.streamContainer}>
+      <h2 style={styles.heading}>Cloud Gaming Stream</h2>
+      <video ref={videoRef} autoPlay playsInline style={styles.video} />
+    </div>
+  );
+}
+
+// Main App Component: Shows the login form until the user logs in.
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = (userData) => {
+    // In a real app, you would verify credentials with your backend.
+    console.log('Logged in as:', userData);
+    setIsLoggedIn(true);
+  };
+
+  return (
+    <div style={styles.appContainer}>
+      {!isLoggedIn ? <LoginForm onLogin={handleLogin} /> : <VideoStream />}
+    </div>
+  );
+}
+
+// Simple inline styles for demonstration purposes.
+const styles = {
+  appContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    backgroundColor: '#1a202c',
+    color: '#fff',
+    flexDirection: 'column'
+  },
+  formContainer: {
+    backgroundColor: '#2d3748',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+  },
+  heading: {
+    marginBottom: '1rem'
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  input: {
+    marginBottom: '10px',
+    padding: '8px',
+    borderRadius: '4px',
+    border: 'none'
+  },
+  button: {
+    padding: '10px',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#3182ce',
+    color: '#fff',
+    cursor: 'pointer'
+  },
+  streamContainer: {
+    textAlign: 'center'
+  },
+  video: {
+    width: '75%',
+    border: '2px solid #718096'
+  }
+};
+
+export default App;
